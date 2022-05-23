@@ -1,3 +1,5 @@
+using pcso_em_api;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -7,13 +9,16 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
-app.MapGet("Hello", () => "Hello from dotnet six API");
+MessageManager messageManager = new MessageManager();
+
+app.MapGet("Hello", () => "This is very cool I hope");
 app.MapGet("Product", () => "Get some Product from Azure SQL");
 
-app.MapPost("Product", (Product p) => "Product saved in SQL");
+app.MapPost("Product", (Product p) => "");
 app.MapDelete("Product", (string name) => "Deleted");
 
-app.MapPost("Chat", (Message msg) => "Message posted to chat SQL");
+app.MapGet("Chat", () => messageManager?.Messages);
+app.MapPost("Chat", (Message msg) => messageManager?.Messages?.Add(msg));
 
 app.Run();
 
