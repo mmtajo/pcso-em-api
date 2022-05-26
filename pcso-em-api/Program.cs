@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +8,16 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSignalR();
+
+builder.Services.AddCors();
+
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseHttpsRedirection();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseHttpsRedirection();
+
+app.MapHub<Chat>(nameof(Chat));
 
 app.MapGet("/", () => "Hello World!");
 
@@ -80,6 +87,13 @@ app.MapDelete("/todoitems",  async (TodoDb db) =>
 });
 
 app.Run();
+public class Chat : Hub
+{
+    public void Broadcast(string name, string message)
+    {
+        Clients.All.SendAsync("Receive", name, message);
+    }
+}
 
 class Todo
 {
